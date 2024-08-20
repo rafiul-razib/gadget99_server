@@ -37,7 +37,12 @@ async function run() {
     app.get("/allProducts", async(req, res)=>{
         const page = parseInt(req.query.page);
         const size = parseInt(req.query.size);
-        const result = await productsCollection.find().skip(page*size).limit(size).toArray();
+        const searchText = req.query.search
+        const query = {
+          name : {$regex: searchText, $options: 'i'},    
+        }
+        // console.log(searchText)
+        const result = await productsCollection.find(query).skip(page*size).limit(size).toArray();
         res.send(result);
     })
 
