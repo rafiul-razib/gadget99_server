@@ -37,12 +37,21 @@ async function run() {
     app.get("/allProducts", async(req, res)=>{
         const page = parseInt(req.query.page);
         const size = parseInt(req.query.size);
-        const searchText = req.query.search
+        const searchText = req.query.search;
+        const priceSorted = req.query.priceSorted;
+        const dateSorted = req.query.dateSorted;
+        console.log("ascPrice",priceSorted, "dateSort",dateSorted)
         const query = {
           name : {$regex: searchText, $options: 'i'},    
         }
+        const options = {
+          sort: {
+            price: priceSorted === "asc"? 1 : -1,
+            creation_date: dateSorted === "dateAdded"? 1:-1
+          },
+        }
         // console.log(searchText)
-        const result = await productsCollection.find(query).skip(page*size).limit(size).toArray();
+        const result = await productsCollection.find(query, options).skip(page*size).limit(size).toArray();
         res.send(result);
     })
 
